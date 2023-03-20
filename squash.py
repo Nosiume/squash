@@ -8,7 +8,9 @@ class Racket:
         self.x, self.y = x, y
 
     def update(self, screen):
-        self.hitbox = self.texture.get_rect(topleft = (self.x, self.y))
+        self.hitbox = pygame.Rect(self.x, self.y+10, 20, 80)
+        self.top_hitbox = pygame.Rect(self.x, self.y, 20, 10)
+        self.bottom_hitbox = pygame.Rect(self.x, self.y+90, 20, 10)
 
         _, h = pygame.display.get_surface().get_size()
         _, y = pygame.mouse.get_pos()
@@ -18,8 +20,12 @@ class Racket:
     def render(self, screen):
         screen.blit(self.texture, (self.x, self.y))
 
-    def collides(self, foreignHitbox):
-        return pygame.Rect.colliderect(self.hitbox, foreignHitbox)
+    def ballCollision(self, ballHitbox):
+        if pygame.Rect.collidelist(ballHitbox, [self.top_hitbox, self.bottom_hitbox]) != -1:
+            return (1, -1)
+        elif pygame.Rect.colliderect(ballHitbox, self.hitbox):
+            return (-1, 1)
+        return (1, 1)
 
 class Ball:
 
@@ -32,8 +38,9 @@ class Ball:
     def update(self, screen, racket):
         self.hitbox = self.texture.get_rect(topleft = (self.x, self.y))
 
-        if racket.collides(self.hitbox):
-            self.dx *= -1
+        changes = racket.ballCollision(self.hitbox)
+        self.dx *= changes[0]
+        self.dy *= changes[1]
         
         self.x += self.dx
         self.y += self.dy
