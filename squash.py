@@ -1,6 +1,6 @@
 import pygame
 from pygame.math import Vector2
-import random
+from gamestates import GameState
 
 class Racket:
 
@@ -55,47 +55,18 @@ class Ball:
     def render(self, screen):
         screen.blit(self.texture, (self.x, self.y))
 
-class Squash:
+class SquashState(GameState):
 
-    def __init__(self, dimensions):
-        pygame.init()
-        self.screen = pygame.display.set_mode(dimensions)
-        self.clock = pygame.time.Clock()
-        self.running = True
+    def __init__(self, screen):
+        super().__init__("cyan", screen)
 
         self.ball = Ball(200, 100, 5)
         self.racket = Racket(100, 100)
 
-
-    def handleEvents(self):
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                self.running = False
-
     def update(self):
         self.racket.update(self.screen)
         self.ball.update(self.screen, self.racket)
-        
+
     def render(self):
         self.racket.render(self.screen)
         self.ball.render(self.screen)
-
-    def run(self, fps=60):
-        while self.running:
-            self.handleEvents()
-
-            self.screen.fill("cyan")
-
-            self.update()
-            self.render()
-
-            pygame.display.flip()
-            self.clock.tick(fps)
-        pygame.quit()
-
-def main():
-    game = Squash((1280, 720))
-    game.run(fps=144)
-
-if __name__ == "__main__":
-    main()
