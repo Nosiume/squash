@@ -1,4 +1,5 @@
 import pygame
+from pygame.math import Vector2
 import random
 
 class Racket:
@@ -8,9 +9,9 @@ class Racket:
         self.x, self.y = x, y
 
     def update(self, screen):
-        self.hitbox = pygame.Rect(self.x, self.y+10, 20, 80)
-        self.top_hitbox = pygame.Rect(self.x, self.y, 20, 10)
-        self.bottom_hitbox = pygame.Rect(self.x, self.y+90, 20, 10)
+        self.hitbox = pygame.Rect(self.x, self.y+5, 20, 80)
+        self.top_hitbox = pygame.Rect(self.x, self.y, 20, 5)
+        self.bottom_hitbox = pygame.Rect(self.x, self.y+95, 20, 5)
 
         _, h = pygame.display.get_surface().get_size()
         _, y = pygame.mouse.get_pos()
@@ -33,23 +34,23 @@ class Ball:
         self.texture = pygame.image.load("./balle-jaune.gif")
         self.x, self.y = x, y
         self.speed = speed
-        self.dx = self.dy = random.choice([-self.speed, self.speed])
+        self.direction = (Vector2(1, 1).normalize() * speed)
     
     def update(self, screen, racket):
         self.hitbox = self.texture.get_rect(topleft = (self.x, self.y))
 
         changes = racket.ballCollision(self.hitbox)
-        self.dx *= changes[0]
-        self.dy *= changes[1]
+        self.direction.x *= changes[0]
+        self.direction.y *= changes[1]
         
-        self.x += self.dx
-        self.y += self.dy
+        self.x += self.direction.x
+        self.y += self.direction.y
 
         w,h = pygame.display.get_surface().get_size()
         if self.x < 0 or self.x > w-40:
-            self.dx *= -1
+            self.direction.x *= -1
         if self.y < 0 or self.y > h-40:
-            self.dy *= -1
+            self.direction.y *= -1
 
     def render(self, screen):
         screen.blit(self.texture, (self.x, self.y))
