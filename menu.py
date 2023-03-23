@@ -93,8 +93,12 @@ class WaitingRoom(GameState):
 
         # Draw players
         for i, player in enumerate(self.players.keys()):
-            playerText = self.textFont.render("Player " + str(i), True, "white")
-            readyText = self.textFont.render("Ready" if self.players[player] else "Not Ready", True, "white")
+            playerText = self.textFont.render("Player " + str(i), True, "cyan")
+            readyText = self.textFont.render(
+                "Ready" if self.players[player] else "Not Ready", 
+                True, 
+                "green" if self.players[player] else "red"
+            )
             self.screen.blit(playerText, (100, 250 + i*150))
             self.screen.blit(readyText, (700, 250 + i*150))
 
