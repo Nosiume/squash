@@ -1,37 +1,54 @@
 import pygame
 from squash import SquashState
+from menu import MenuState, WaitingRoom
 
 class Squash:
 
     def __init__(self, dimensions):
         pygame.init()
+        pygame.font.init()
+
+        self.server = None
+        self.client = None
 
         self.screen = pygame.display.set_mode(dimensions)
         self.clock = pygame.time.Clock()
         self.running = True
 
         self.states = {
-            "Squash": SquashState(self.screen)
+            "Menu": MenuState(self, self.screen),
+            "WaitingRoom": WaitingRoom(self, self.screen),
+            "Squash": SquashState(self, self.screen)
         }
-        self.currentState = "Squash"
+        self.currentState = self.states["Menu"]
 
+
+    def changeState(self, name):
+        self.currentState = self.states[name]
 
     def handleEvents(self):
-        for event in pygame.event.get():
+        events = pygame.event.get()
+        for event in events:
             if event.type == pygame.QUIT:
                 self.running = False
+        self.currentState.handleEvents(events)
 
     def run(self, fps=60):
         while self.running:
             self.handleEvents()
 
-            state = self.states[self.currentState]
-            state.clear()
-            state.update()
-            state.render()
+            self.currentState.clear()
+            self.currentState.update()
+            self.currentState.render()
 
+            pygame.display.update()
             pygame.display.flip()
             self.clock.tick(fps)
+
+        if self.server: 
+            self.server.close()
+        if self.client:
+            self.client.close()
         pygame.quit()
 
 def main():

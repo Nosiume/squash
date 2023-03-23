@@ -57,11 +57,14 @@ class Ball:
 
 class SquashState(GameState):
 
-    def __init__(self, screen):
-        super().__init__("cyan", screen)
+    def __init__(self, game, screen):
+        super().__init__(game, "cyan", screen)
 
         self.ball = Ball(200, 100, 5)
         self.racket = Racket(100, 100)
+
+    def handleEvents(self, events):
+        pass
 
     def update(self):
         self.racket.update(self.screen)
