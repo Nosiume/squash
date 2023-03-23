@@ -42,7 +42,7 @@ class WaitingRoom(GameState):
 
         self.readyButton = Button(
             screen,
-            1000, 550, 150, 100,
+            1000, 550, 220, 100,
             text='Ready',
             inactiveColour=(62, 212, 99),
             hoverColour=(125, 229, 150),
@@ -50,12 +50,30 @@ class WaitingRoom(GameState):
             textColour=(255, 255, 255),
             font = self.textFont,
             radius=100,
-            onClick = lambda: self.game.client.sendPacket(ToggleReadyPacket())
+            onClick = self.onClickReadyButton
         )
 
     def addPlayer(self, addr):
         if len(self.players) != 2 and addr not in self.players:
             self.players[addr] = False
+
+    def onClickReadyButton(self):
+        self.game.client.sendPacket(ToggleReadyPacket())
+
+        #Recreate button with different text
+        self.readyButton = Button(
+            self.screen,
+            1000, 550, 220, 100,
+            text='Not Ready' if self.readyButton.string == 'Ready' else 'Ready',
+            inactiveColour=(62, 212, 99),
+            hoverColour=(125, 229, 150),
+            pressedColor=(94, 163, 111),
+            textColour=(255, 255, 255),
+            font = self.textFont,
+            radius=100,
+            onClick = self.onClickReadyButton
+        )
+        
 
     def toggleReady(self, addr):
         self.players[addr] = not self.players[addr]

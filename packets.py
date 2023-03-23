@@ -81,7 +81,7 @@ class ConnectionPacket(Packet):
         print("[+] A player arrived !")
     
     def onServerReceive(self, server, origin):
-        #When we receive connection we update every player's player list
+        #When we receive connection we update every player's player list 
         server.sendToAll(PlayerListPacket(playerList=server.clients))
         server.sendToAll(self)
 
